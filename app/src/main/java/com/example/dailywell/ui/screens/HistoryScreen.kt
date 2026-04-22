@@ -16,7 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.dailywell.data.model.WellbeingEntry
+import com.example.dailywell.ui.components.BottomNavBar
 import com.example.dailywell.viewmodel.HistoryViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -24,6 +26,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
+    navController: NavController,
     onNavigateToEdit: (Int) -> Unit,
     historyViewModel: HistoryViewModel = viewModel()
 ) {
@@ -47,9 +50,7 @@ fun HistoryScreen(
             title = { Text("Delete Record") },
             text = { Text("Are you sure you want to delete this record? This action cannot be undone.") },
             confirmButton = {
-                TextButton(
-                    onClick = { historyViewModel.deleteEntry(entryToDelete!!) }
-                ) {
+                TextButton(onClick = { historyViewModel.deleteEntry(entryToDelete!!) }) {
                     Text("Delete", color = ErrorRed)
                 }
             },
@@ -61,13 +62,14 @@ fun HistoryScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundLight)
-    ) {
+    Scaffold(
+        containerColor = BackgroundLight,
+        bottomBar = { BottomNavBar(navController = navController) }
+    ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
             //  Top header area
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
@@ -91,25 +93,16 @@ fun HistoryScreen(
                             color = TextSecondary
                         )
                     }
-
-                    // Filter icon button
-                    IconButton(
-                        onClick = { historyViewModel.resetFilters() }
-                    ) {
-                        Icon(
-                            Icons.Default.FilterList,
-                            contentDescription = "Reset filters",
-                            tint = PrimaryNavy
-                        )
+                    IconButton(onClick = { historyViewModel.resetFilters() }) {
+                        Icon(Icons.Default.FilterList, contentDescription = "Reset filters", tint = PrimaryNavy)
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                //  Filter chips row
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                // Filter chips row
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
                     // Mood filter dropdown
                     ExposedDropdownMenuBox(
                         expanded = moodFilterExpanded,
@@ -121,21 +114,10 @@ fun HistoryScreen(
                             onClick = { moodFilterExpanded = true },
                             label = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.SentimentSatisfied,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                    Icon(Icons.Default.SentimentSatisfied, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = if (selectedMoodFilter == "All") "Mood" else selectedMoodFilter,
-                                        fontSize = 13.sp
-                                    )
-                                    Icon(
-                                        Icons.Default.ArrowDropDown,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                    Text(text = if (selectedMoodFilter == "All") "Mood" else selectedMoodFilter, fontSize = 13.sp)
+                                    Icon(Icons.Default.ArrowDropDown, contentDescription = null, modifier = Modifier.size(16.dp))
                                 }
                             },
                             modifier = Modifier.menuAnchor(),
@@ -172,21 +154,10 @@ fun HistoryScreen(
                             onClick = { activityFilterExpanded = true },
                             label = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.DirectionsRun,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                    Icon(Icons.Default.DirectionsRun, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = if (selectedActivityFilter == "All") "Activity" else selectedActivityFilter,
-                                        fontSize = 13.sp
-                                    )
-                                    Icon(
-                                        Icons.Default.ArrowDropDown,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                    Text(text = if (selectedActivityFilter == "All") "Activity" else selectedActivityFilter, fontSize = 13.sp)
+                                    Icon(Icons.Default.ArrowDropDown, contentDescription = null, modifier = Modifier.size(16.dp))
                                 }
                             },
                             modifier = Modifier.menuAnchor(),
@@ -216,43 +187,22 @@ fun HistoryScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Record list using LazyColumn
+            // ── Record list using LazyColumn ──────────────
             if (filteredEntries.isEmpty()) {
-                // Empty state
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Default.FolderOpen,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(64.dp)
-                        )
+                        Icon(Icons.Default.FolderOpen, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(64.dp))
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No records found.",
-                            fontSize = 16.sp,
-                            color = TextSecondary
-                        )
-                        Text(
-                            text = "Start your first daily check-in!",
-                            fontSize = 14.sp,
-                            color = TextSecondary
-                        )
+                        Text(text = "No records found.", fontSize = 16.sp, color = TextSecondary)
+                        Text(text = "Start your first daily check-in!", fontSize = 14.sp, color = TextSecondary)
                     }
                 }
             } else {
-                // LazyColumn for wellbeing entries
                 LazyColumn(
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(
-                        items = filteredEntries,
-                        key = { entry -> entry.id }
-                    ) { entry ->
+                    items(items = filteredEntries, key = { entry -> entry.id }) { entry ->
                         WellbeingEntryCard(
                             entry = entry,
                             onEditClick = { onNavigateToEdit(entry.id) },
@@ -273,13 +223,9 @@ fun WellbeingEntryCard(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    // Parse date for display
     val displayDate = try {
         val date = LocalDate.parse(entry.date)
-        Pair(
-            date.dayOfMonth.toString(),
-            date.format(DateTimeFormatter.ofPattern("MMM yyyy"))
-        )
+        Pair(date.dayOfMonth.toString(), date.format(DateTimeFormatter.ofPattern("MMM yyyy")))
     } catch (e: Exception) {
         Pair("--", "--")
     }
@@ -291,29 +237,17 @@ fun WellbeingEntryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
-
-            //  Date block on the left
+            // Date block on the left
             Card(
                 shape = RoundedCornerShape(10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFDDDDEE))
             ) {
                 Column(
-                    modifier = Modifier
-                        .width(56.dp)
-                        .padding(vertical = 10.dp),
+                    modifier = Modifier.width(56.dp).padding(vertical = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = displayDate.first,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary
-                    )
-                    Text(
-                        text = displayDate.second,
-                        fontSize = 10.sp,
-                        color = TextSecondary
-                    )
+                    Text(text = displayDate.first, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = displayDate.second, fontSize = 10.sp, color = TextSecondary)
                 }
             }
 
@@ -321,58 +255,22 @@ fun WellbeingEntryCard(
 
             // Entry details
             Column(modifier = Modifier.weight(1f)) {
-
-                // Row 1: Mood + Stress
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    EntryDetailItem(
-                        icon = Icons.Default.SentimentSatisfied,
-                        label = "Mood",
-                        value = entry.mood,
-                        modifier = Modifier.weight(1f)
-                    )
-                    EntryDetailItem(
-                        icon = Icons.Default.BarChart,
-                        label = "Stress",
-                        value = entry.stressLevel,
-                        modifier = Modifier.weight(1f)
-                    )
+                    EntryDetailItem(icon = Icons.Default.SentimentSatisfied, label = "Mood", value = entry.mood, modifier = Modifier.weight(1f))
+                    EntryDetailItem(icon = Icons.Default.BarChart, label = "Stress", value = entry.stressLevel, modifier = Modifier.weight(1f))
                 }
-
                 Spacer(modifier = Modifier.height(6.dp))
-
-                // Row 2: Sleep + Activity
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    EntryDetailItem(
-                        icon = Icons.Default.DarkMode,
-                        label = "Sleep",
-                        value = "${entry.sleepDuration}h",
-                        modifier = Modifier.weight(1f)
-                    )
-                    EntryDetailItem(
-                        icon = Icons.Default.DirectionsRun,
-                        label = "Activity",
-                        value = entry.activityType,
-                        modifier = Modifier.weight(1f)
-                    )
+                    EntryDetailItem(icon = Icons.Default.DarkMode, label = "Sleep", value = "${entry.sleepDuration}h", modifier = Modifier.weight(1f))
+                    EntryDetailItem(icon = Icons.Default.DirectionsRun, label = "Activity", value = entry.activityType, modifier = Modifier.weight(1f))
                 }
 
-                // Notes preview (if available)
                 if (entry.notes.isNotBlank()) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(verticalAlignment = Alignment.Top) {
-                        Icon(
-                            Icons.Default.Comment,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(14.dp)
-                        )
+                        Icon(Icons.Default.Comment, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Note: ${entry.notes}",
-                            fontSize = 12.sp,
-                            color = TextSecondary,
-                            maxLines = 1
-                        )
+                        Text(text = "Note: ${entry.notes}", fontSize = 12.sp, color = TextSecondary, maxLines = 1)
                     }
                 }
 
@@ -386,9 +284,7 @@ fun WellbeingEntryCard(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryNavy),
                         modifier = Modifier.height(32.dp)
-                    ) {
-                        Text("Edit", fontSize = 13.sp)
-                    }
+                    ) { Text("Edit", fontSize = 13.sp) }
 
                     OutlinedButton(
                         onClick = onDeleteClick,
@@ -399,9 +295,7 @@ fun WellbeingEntryCard(
                             brush = androidx.compose.ui.graphics.SolidColor(ErrorRed)
                         ),
                         modifier = Modifier.height(32.dp)
-                    ) {
-                        Text("Delete", fontSize = 13.sp, color = ErrorRed)
-                    }
+                    ) { Text("Delete", fontSize = 13.sp, color = ErrorRed) }
                 }
             }
         }
@@ -416,27 +310,10 @@ fun EntryDetailItem(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = PrimaryNavy,
-            modifier = Modifier.size(14.dp)
-        )
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+        Icon(imageVector = icon, contentDescription = null, tint = PrimaryNavy, modifier = Modifier.size(14.dp))
         Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = "$label: ",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = TextPrimary
-        )
-        Text(
-            text = value,
-            fontSize = 12.sp,
-            color = TextSecondary
-        )
+        Text(text = "$label: ", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = TextPrimary)
+        Text(text = value, fontSize = 12.sp, color = TextSecondary)
     }
 }

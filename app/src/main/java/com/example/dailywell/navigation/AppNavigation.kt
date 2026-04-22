@@ -60,6 +60,7 @@ fun AppNavigation() {
         // Home
         composable("home") {
             HomeScreen(
+                navController = navController,
                 userId = loggedInUserId,
                 onNavigateToCheckIn = {
                     navController.navigate("checkin")
@@ -103,6 +104,7 @@ fun AppNavigation() {
         // History
         composable("history") {
             HistoryScreen(
+                navController = navController,
                 onNavigateToEdit = { entryId ->
                     navController.navigate("checkin/$entryId")
                 }
@@ -111,17 +113,18 @@ fun AppNavigation() {
 
         // Search
         composable("search") {
-            SearchScreen()
+            SearchScreen(navController = navController)
         }
 
         // Weekly Report / Chart
         composable("chart") {
-            ChartScreen()
+            ChartScreen(navController = navController)
         }
 
         // Profile
         composable("profile") {
             ProfileScreen(
+                navController = navController,
                 userId = loggedInUserId,
                 onLogout = {
                     navController.navigate("login") {

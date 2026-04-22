@@ -19,10 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.dailywell.ui.components.BottomNavBar
 import com.example.dailywell.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
+    navController: NavController,
     userId: Int,
     onNavigateToCheckIn: () -> Unit,
     onNavigateToTips: () -> Unit,
@@ -39,7 +42,8 @@ fun HomeScreen(
     }
 
     Scaffold(
-        containerColor = BackgroundLight
+        containerColor = BackgroundLight,
+        bottomBar = { BottomNavBar(navController = navController) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -50,7 +54,7 @@ fun HomeScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ── 顶部问候栏 ────────────────────────────────
+            // Top greeting row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -89,7 +93,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ── 主标题 ────────────────────────────────────
+            // Screen title
             Text(
                 text = "Wellbeing Dashboard",
                 fontSize = 26.sp,
@@ -104,7 +108,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── Today's Summary 卡片 ──────────────────────
+            // Today's Summary card
             HomeCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.BarChart, contentDescription = null, tint = PrimaryNavy)
@@ -118,51 +122,26 @@ fun HomeScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 if (todayEntry != null) {
-                    SummaryRow(
-                        icon = Icons.Default.SentimentSatisfied,
-                        label = "Mood",
-                        value = todayEntry!!.mood
-                    )
+                    SummaryRow(icon = Icons.Default.SentimentSatisfied, label = "Mood", value = todayEntry!!.mood)
                     SummaryDivider()
-                    SummaryRow(
-                        icon = Icons.Default.Waves,
-                        label = "Stress",
-                        value = todayEntry!!.stressLevel
-                    )
+                    SummaryRow(icon = Icons.Default.Waves, label = "Stress", value = todayEntry!!.stressLevel)
                     SummaryDivider()
-                    SummaryRow(
-                        icon = Icons.Default.DarkMode,
-                        label = "Sleep",
-                        value = "${todayEntry!!.sleepDuration} hours"
-                    )
+                    SummaryRow(icon = Icons.Default.DarkMode, label = "Sleep", value = "${todayEntry!!.sleepDuration} hours")
                     SummaryDivider()
-                    SummaryRow(
-                        icon = Icons.Default.DirectionsRun,
-                        label = "Activity",
-                        value = todayEntry!!.activityLevel
-                    )
+                    SummaryRow(icon = Icons.Default.DirectionsRun, label = "Activity", value = todayEntry!!.activityLevel)
                 } else {
-                    Text(
-                        text = "No check-in recorded today yet.",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
+                    Text(text = "No check-in recorded today yet.", color = TextSecondary, fontSize = 14.sp)
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ── Reminder 卡片 ─────────────────────────────
+            // Reminder card
             HomeCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Notifications, contentDescription = null, tint = PrimaryNavy)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Reminder",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary
-                    )
+                    Text(text = "Reminder", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 SummaryRow(
@@ -180,63 +159,39 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ── Support Preview 卡片 ──────────────────────
+            // Support Preview card
             HomeCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Favorite, contentDescription = null, tint = PrimaryNavy)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Support Preview",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary
-                    )
+                    Text(text = "Support Preview", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = supportPreview,
-                    fontSize = 14.sp,
-                    color = TextSecondary,
-                    lineHeight = 20.sp
-                )
+                Text(text = supportPreview, fontSize = 14.sp, color = TextSecondary, lineHeight = 20.sp)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── Start Daily Check-in 按钮 ─────────────────
+            // Start Daily Check-in button
             Button(
                 onClick = onNavigateToCheckIn,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
+                modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(26.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryNavy)
             ) {
-                Text(
-                    text = "Start Daily Check-in",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
+                Text(text = "Start Daily Check-in", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── View Support Tips 按钮 ────────────────────
+            // View Support Tips button
             Button(
                 onClick = onNavigateToTips,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
+                modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(26.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryNavy)
             ) {
-                Text(
-                    text = "View Support Tips",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
+                Text(text = "View Support Tips", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -244,7 +199,7 @@ fun HomeScreen(
     }
 }
 
-// ── 可复用卡片 ────────────────────────────────────────────
+// Reusable card wrapper
 @Composable
 fun HomeCard(content: @Composable ColumnScope.() -> Unit) {
     Card(
@@ -253,49 +208,26 @@ fun HomeCard(content: @Composable ColumnScope.() -> Unit) {
         colors = CardDefaults.cardColors(containerColor = CardBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            content = content
-        )
+        Column(modifier = Modifier.padding(16.dp), content = content)
     }
 }
 
-// ── 摘要行 ────────────────────────────────────────────────
+// Summary row with icon + label + value
 @Composable
 fun SummaryRow(icon: ImageVector, label: String, value: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = PrimaryNavy,
-            modifier = Modifier.size(20.dp)
-        )
+        Icon(imageVector = icon, contentDescription = null, tint = PrimaryNavy, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = "$label: ",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = TextPrimary
-        )
-        Text(
-            text = value,
-            fontSize = 14.sp,
-            color = TextSecondary
-        )
+        Text(text = "$label: ", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = TextPrimary)
+        Text(text = value, fontSize = 14.sp, color = TextSecondary)
     }
 }
 
-// ── 分隔线 ────────────────────────────────────────────────
+// Thin divider between summary rows
 @Composable
 fun SummaryDivider() {
-    HorizontalDivider(
-        modifier = Modifier.padding(vertical = 2.dp),
-        color = Color(0xFFE0E0E8),
-        thickness = 0.5.dp
-    )
+    HorizontalDivider(modifier = Modifier.padding(vertical = 2.dp), color = Color(0xFFE0E0E8), thickness = 0.5.dp)
 }

@@ -19,11 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.dailywell.ui.components.BottomNavBar
 import com.example.dailywell.viewmodel.ProfileState
 import com.example.dailywell.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
+    navController: NavController,
     userId: Int,
     onLogout: () -> Unit,
     profileViewModel: ProfileViewModel = viewModel()
@@ -64,7 +67,8 @@ fun ProfileScreen(
 
     Scaffold(
         containerColor = BackgroundLight,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = { BottomNavBar(navController = navController) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -75,7 +79,7 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Screen title
+            // ── Screen title ──────────────────────────────
             Text(
                 text = "Profile and Preferences",
                 fontSize = 26.sp,
@@ -85,7 +89,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            //  Profile summary card
+            // ── Profile summary card ──────────────────────
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -140,7 +144,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Name input field
+            // ── Name input field ──────────────────────────
             // Guideline 3: Clear label above the field
             SectionLabel(text = "Name")
             OutlinedTextField(
@@ -159,7 +163,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Reminder time input field
+            // ── Reminder time input field ─────────────────
             SectionLabel(text = "Reminder Time")
             OutlinedTextField(
                 value = reminderTime,
@@ -178,7 +182,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Enable Daily Reminders switch
+            // ── Enable Daily Reminders switch ─────────────
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -212,7 +216,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            //  Support Preferences section
+            // ── Support Preferences section ───────────────
             ProfileSectionTitle(text = "Support Preferences")
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -251,7 +255,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Reminder Frequency section
+            // ── Reminder Frequency section ────────────────
             ProfileSectionTitle(text = "Reminder Frequency")
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -279,7 +283,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            //  Primary Wellbeing Goal section
+            // ── Primary Wellbeing Goal section ────────────
             ProfileSectionTitle(text = "Primary Wellbeing Goal")
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -307,7 +311,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Account section
+            // ── Account section ───────────────────────────
             ProfileSectionTitle(text = "Account")
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -341,7 +345,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Save Preferences button
+            // ── Save Preferences button ───────────────────
             Button(
                 onClick = { profileViewModel.savePreferences() },
                 modifier = Modifier
@@ -379,7 +383,7 @@ fun ProfileScreen(
     }
 }
 
-//  Section title
+// ── Section title ─────────────────────────────────────────
 @Composable
 fun ProfileSectionTitle(text: String) {
     Text(
@@ -390,7 +394,7 @@ fun ProfileSectionTitle(text: String) {
     )
 }
 
-// Checkbox row
+// ── Checkbox row ──────────────────────────────────────────
 @Composable
 fun CheckboxRow(
     label: String,
@@ -416,7 +420,7 @@ fun CheckboxRow(
     }
 }
 
-//  RadioButton row
+// ── RadioButton row ───────────────────────────────────────
 @Composable
 fun RadioButtonRow(
     label: String,
@@ -439,7 +443,7 @@ fun RadioButtonRow(
     }
 }
 
-// Account row with icon and chevron
+// ── Account row with icon and chevron ─────────────────────
 @Composable
 fun AccountRow(
     icon: ImageVector,
